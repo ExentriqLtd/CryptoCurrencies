@@ -18,6 +18,9 @@ function readTicker(){
     $.get("/api/tickers", function(result){
         $("#tickers table tbody").html("");
 
+        var now = new Date();
+        $(".timestamp").html("(Latest Update: " + now + ")");
+
         var opportunities = [];
 
         for(var i in result) {
@@ -30,6 +33,8 @@ function readTicker(){
                 "</tr>");
             opportunities.push(getTopOpportunities(i,result[i]))
         }
+
+        opportunities = opportunities.sort(function(a, b){return b.percentage-a.percentage});
 
         $("#top_arbitrage").html("");
         for(var i in opportunities) {
