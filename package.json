@@ -1,0 +1,40 @@
+{
+  "name": "kraken-api",
+  "version": "1.0.0",
+  "description": "kraken.com API client library for NodeJS",
+  "keywords": [
+    "kraken",
+    "api",
+    "btc",
+    "bitcoin"
+  ],
+  "author": "Robert Myers (https://github.com/nothingisdead)",
+  "contributors": [],
+  "license": "MIT",
+  "dependencies": {
+    "debug": "~2.2.0",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "express-session": "^1.13.0",
+    "gdax-trading-toolkit": "^0.2.1",
+    "got": "^7.1.0",
+    "node-bittrex-api": "^0.8.1",
+    "qs": ">=6.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nothingisdead/npm-kraken-api"
+  },
+  "main": "kraken.js",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "bugs": {
+    "url": "https://github.com/nothingisdead/npm-kraken-api/issues",
+    "email": "rbmyr8@gmail.com"
+  },
+  "scripts": {
+    "start": "node ./www"
+  },
+  "readmeFilename": "README.md"
+}

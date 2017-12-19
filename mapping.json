@@ -1,0 +1,18 @@
+http://data.exentriq.com:9203/cripto-currencies
+
+{
+  "mappings": {
+    "entity": {
+      "_all": { "enabled": false  },
+      "properties": {
+        "source": {"type": "string" ,"index":"not_analyzed"},
+        "currency": {"type": "string" ,"index":"not_analyzed"},
+        "price": {"type": "float" ,"index":"not_analyzed"},
+        "ask": {"type": "float" ,"index":"not_analyzed"},
+        "bid": {"type": "float" ,"index":"not_analyzed"},
+        "volume": {"type": "float" ,"index":"not_analyzed"},
+        "timestamp" : {"type": "date"}
+      }
+    }
+  }
+}
