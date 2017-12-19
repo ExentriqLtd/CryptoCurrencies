@@ -1,9 +1,13 @@
+require('dotenv').config();
 var express = require('express');
 var request = require('request');
 
 var router = express.Router();
 
 var interval = 30*1000; //intervallo in millisecondi
+
+var bus = process.env.BUS || '';
+var enviroment = process.env.ENV || 'Stage';
 
 var tickersTable = {
     ETHEUR:{},
@@ -123,8 +127,10 @@ function readKraken(){
 
 //Index Data
 function indexDocument(source, product, msg){
+    if(enviroment != "Prod"){
+        return;
+    }
     console.log("Index Data " + source, product);
-
     var document = {};
     document.source = source;
     document.timestamp = (new Date().getTime());
@@ -158,17 +164,15 @@ function indexDocument(source, product, msg){
         method: 'post',
         body: document, // Javascript object
         json: true, // Use,If you are sending JSON data
-        url: "https://bus.exentriq.com/criptoCurrencies"
+        url: bus
     }
 
-    request.post(options, function (error, response, body) {
+    /*request.post(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                //console.log(body)
             }else{
-                //console.log(error)
             }
         }
-    );
+    );*/
 }
 
 //nodes
