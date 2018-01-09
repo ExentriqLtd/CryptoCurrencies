@@ -17,6 +17,7 @@
     "express": "^4.14.0",
     "express-session": "^1.13.0",
     "gdax-trading-toolkit": "^0.2.1",
+    "googleapis": "^23.0.0",
     "got": "^7.1.0",
     "node-bittrex-api": "^0.8.1",
     "qs": ">=6.4.0"
