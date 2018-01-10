@@ -38,7 +38,7 @@ class GoogleSheetClient {
 
   }
 
-  updateAndNote(spreadsheetId, value, note, sheetId, row, col, callback){
+  updateAndNote(spreadsheetId, value, number, note, sheetId, row, col, callback){
     var jwtClient = this.jwtClient;
     jwtClient.authorize(function (err, tokens) {
       if (err) {
@@ -58,7 +58,7 @@ class GoogleSheetClient {
           },
           "cell": {
             note: note,
-            userEnteredValue: {"stringValue":value}
+            userEnteredValue: {"stringValue":value, "numberValue": number}
           },
           "fields": "note, userEnteredValue"
         }

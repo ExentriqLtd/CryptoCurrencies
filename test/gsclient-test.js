@@ -6,7 +6,7 @@ googleSheetClient.update('1b4SOJGNRtJqmN2b-ZvD9JQZcNCKYVe3btSxVFTK8Zs0', 'Foglio
   console.log(resp);
 });
 */
-googleSheetClient.updateAndNote('1b4SOJGNRtJqmN2b-ZvD9JQZcNCKYVe3btSxVFTK8Zs0','Test value', 'Test note', 0, 1, 1, function(err, resp){
+googleSheetClient.updateAndNote('1b4SOJGNRtJqmN2b-ZvD9JQZcNCKYVe3btSxVFTK8Zs0',null, 5, 'Test note', 0, 1, 1, function(err, resp){
   console.log(err);
   console.log(resp);
 });
