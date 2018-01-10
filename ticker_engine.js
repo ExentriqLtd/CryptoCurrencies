@@ -88,9 +88,11 @@ function readBitrex(){
         }
         for(var i in bitrexProducts){
             bittrex.getticker( { market : bitrexProducts[i] }, function( ticker ) {
-                var row = bitrexMap[bitrexProducts[i]]
-                tickersTable[row]['Bitrex'] = ticker.result;
-                indexDocument('Bitrex',row,ticker.result);
+                if(ticker != null){
+                    var row = bitrexMap[bitrexProducts[i]]
+                    tickersTable[row]['Bitrex'] = ticker.result;
+                    indexDocument('Bitrex',row,ticker.result);
+                }
             });
         }
     });
@@ -126,10 +128,24 @@ function readKraken(){
 
 
 //Index Data
+var GoogleSheetClient = require('./gsclient');
+var googleSheetClient = new GoogleSheetClient('./key.json');
+var googleFileId = "1KVmI4xWIFMNh90zyW3b-femvIsRJYY561-ggyGihdmU";
+
 function indexDocument(source, product, msg){
+    /*Update Excel File*/
+    var cell = getCell(source, product, msg);
+    if(cell[0]){
+        googleSheetClient.update(googleFileId, cell[0], cell[1], function(err, resp){
+            console.log(err);
+            console.log(resp);
+        });
+    }
+
     if(enviroment != "Prod"){
         return;
     }
+
     console.log("Index Data " + source, product);
     var document = {};
     document.source = source;
@@ -173,6 +189,18 @@ function indexDocument(source, product, msg){
             }
         }
     );
+}
+
+
+const gdaxCellConf = {'ETHBTC':'Objectives!k37'};
+
+function getCell(source, product, msg){
+    var cell = [];
+    if(source == "GDAX"){
+        cell[0] = gdaxCellConf[product];
+        cell[1] = msg.price;
+    }
+    return cell;
 }
 
 //nodes
