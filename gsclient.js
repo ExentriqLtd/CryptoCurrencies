@@ -38,6 +38,43 @@ class GoogleSheetClient {
 
   }
 
+  updateAndNote(spreadsheetId, value, note, sheetId, row, col, callback){
+    var jwtClient = this.jwtClient;
+    jwtClient.authorize(function (err, tokens) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      var requests = [];
+      requests.push({
+        "repeatCell": {
+          "range": {
+            "sheetId": sheetId,
+            "startRowIndex": row,
+            "endRowIndex": row+1,
+            "startColumnIndex": col,
+            "endColumnIndex": col+1
+          },
+          "cell": {
+            note: note,
+            userEnteredValue: {"stringValue":value}
+          },
+          "fields": "note, userEnteredValue"
+        }
+      });
+
+
+      sheets.spreadsheets.batchUpdate({
+        auth: jwtClient,
+        spreadsheetId: spreadsheetId,
+        resource:{requests: requests}
+      }, callback);
+
+    });
+
+  }
+
 }
 
 module.exports = GoogleSheetClient;
