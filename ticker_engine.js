@@ -12,7 +12,15 @@ var enviroment = process.env.ENV || 'Stage';
 var tickersTable = {
     ETHEUR:{},
     ETHBTC:{},
-    BTCEUR:{}
+    BTCEUR:{},
+    IOTBTC:{},
+    NAVBTC:{},
+    XVGBTC:{},
+    BTNBTC:{},
+    DCRBTC:{},
+    CVCBTC:{},
+    XLMBTC:{},
+    ADABTC:{}
 };
 
 //GDAX e BITFINEX
@@ -47,13 +55,16 @@ GTT.Factories.GDAX.FeedFactory(logger, gdaxProducts).then((feed) => {
 });
 
 //BITFINEX
-const bitfinexProducts = ['ETH-BTC'];
-const bitfinexMap={'ETH-BTC':'ETHBTC'};
+const bitfinexProducts = ['ETH-BTC','IOTBTC'];
+const bitfinexMap={
+    'ETH-BTC':'ETHBTC',
+    'IOTBTC':'IOTBTC'
+};
 var latestBitfinexRead=[];
 GTT.Factories.Bitfinex.FeedFactory(logger, bitfinexProducts).then((feed) => {
     feed.on('data', msg => {
         if(msg.type == "ticker"){
-            var row = gdaxMap[msg.productId]
+            var row = bitfinexMap[msg.productId]
             tickersTable[row]['Bitfinex'] = msg;
             if(latestBitfinexRead[msg.productId] == null) latestBitfinexRead[msg.productId]=0;
             var n = (new Date()).getTime();
@@ -69,16 +80,25 @@ GTT.Factories.Bitfinex.FeedFactory(logger, bitfinexProducts).then((feed) => {
 });
 
 //Bittrex
-const bitrexProducts = ['BTC-ETH'];
-const bitrexMap = {'BTC-ETH':'ETHBTC'};
+const bitrexProducts = ['BTC-ETH','BTC-NAV','BTC-XVG','BTC-BTN','BTC-DCR','BTC-CVC','BTC-XLM','BTC-ADA'];
+const bitrexMap = {
+    'BTC-ETH':'ETHBTC',
+    'BTC-NAV':'NAVBTC',
+    'BTC-XVG':'XVGBTC',
+    'BTC-BTN':'BTNBTC',
+    'BTC-DCR':'DCRBTC',
+    'BTC-CVC':'CVCBTC',
+    'BTC-XLM':'XLMBTC',
+    'BTC-ADA':'ADABTC'
+};
 
 var bittrex = require('node-bittrex-api');
 bittrex.options({
     'apikey' : "API_KEY",
     'apisecret' : "API_SECRET",
 });
-readBitrex();
 
+readBitrex();
 setInterval(readBitrex,interval);
 
 function readBitrex(){
@@ -87,16 +107,24 @@ function readBitrex(){
             return console.error(err);
         }
         for(var i in bitrexProducts){
-            bittrex.getticker( { market : bitrexProducts[i] }, function( ticker ) {
-                if(ticker != null){
-                    var row = bitrexMap[bitrexProducts[i]]
-                    tickersTable[row]['Bitrex'] = ticker.result;
-                    indexDocument('Bitrex',row,ticker.result);
-                }
-            });
+            getTicker(bitrexProducts[i]);
         }
     });
 }
+
+function getTicker(market) {
+    bittrex.getticker({market : market},
+        function(ticker) {
+            console.log(ticker,market);
+            if(ticker != null){
+                var row = bitrexMap[market]
+                tickersTable[row]['Bitrex'] = ticker.result;
+                indexDocument('Bitrex',row,ticker.result);
+            }
+        }
+    );
+}
+
 
 //Kraken
 const key          = '...'; // API Key
@@ -134,11 +162,12 @@ var googleFileId = "1KVmI4xWIFMNh90zyW3b-femvIsRJYY561-ggyGihdmU";
 
 function indexDocument(source, product, msg){
     /*Update Excel File*/
+    //console.log("Update Excel File " + source, product);
     var cell = getCell(source, product, msg);
     if(cell[0]){
         googleSheetClient.update(googleFileId, cell[0], cell[1], function(err, resp){
-            console.log(err);
-            console.log(resp);
+            //console.log(err);
+            //console.log(resp);
         });
     }
 
@@ -192,13 +221,34 @@ function indexDocument(source, product, msg){
 }
 
 
-const gdaxCellConf = {'ETHBTC':'Objectives!k37'};
+const gdaxCellConf = {
+    'BTCEUR':'Objectives!g21',
+    'ETHBTC':'Objectives!k37'
+};
+const bitfinexCellConf = {'IOTBTC':'Objectives!k43'};
+const bitrexCellConf = {
+    'NAVBTC':'Objectives!k48',
+    'XVGBTC':'Objectives!k49',
+    'BTNBTC':'Objectives!k50',
+    'DCRBTC':'Objectives!k51',
+    'CVCBTC':'Objectives!k52',
+    'XLMBTC':'Objectives!k53',
+    'ADABTC':'Objectives!k54'
+};
 
 function getCell(source, product, msg){
     var cell = [];
     if(source == "GDAX"){
         cell[0] = gdaxCellConf[product];
         cell[1] = msg.price;
+    }
+    if(source == "Bitfinex"){
+        cell[0] = bitfinexCellConf[product];
+        cell[1] = msg.price;
+    }
+    if(source == "Bitrex"){
+        cell[0] = bitrexCellConf[product];
+        cell[1] = msg.Last;
     }
     return cell;
 }
