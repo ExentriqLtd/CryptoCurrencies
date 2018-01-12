@@ -16,7 +16,7 @@ var tickersTable = {
     IOTBTC:{},
     NAVBTC:{},
     XVGBTC:{},
-    BTNBTC:{},
+    BNTBTC:{},
     DCRBTC:{},
     CVCBTC:{},
     XLMBTC:{},
@@ -36,7 +36,7 @@ const gdaxMap={
 };
 
 var latestGDaxRead=[];
-GTT.Factories.GDAX.FeedFactory(logger, gdaxProducts).then((feed) => {
+/*GTT.Factories.GDAX.FeedFactory(logger, gdaxProducts).then((feed) => {
     feed.on('data', msg => {
         if(msg.type == "ticker"){
             var row = gdaxMap[msg.productId];
@@ -52,7 +52,7 @@ GTT.Factories.GDAX.FeedFactory(logger, gdaxProducts).then((feed) => {
 }).catch((err) => {
     logger.log('error', err.message);
     process.exit(1);
-});
+});*/
 
 //BITFINEX
 const bitfinexProducts = ['ETH-BTC','IOTBTC'];
@@ -61,7 +61,7 @@ const bitfinexMap={
     'IOTBTC':'IOTBTC'
 };
 var latestBitfinexRead=[];
-GTT.Factories.Bitfinex.FeedFactory(logger, bitfinexProducts).then((feed) => {
+/*GTT.Factories.Bitfinex.FeedFactory(logger, bitfinexProducts).then((feed) => {
     feed.on('data', msg => {
         if(msg.type == "ticker"){
             var row = bitfinexMap[msg.productId]
@@ -77,15 +77,15 @@ GTT.Factories.Bitfinex.FeedFactory(logger, bitfinexProducts).then((feed) => {
 }).catch((err) => {
     logger.log('error', err.message);
     process.exit(1);
-});
+});*/
 
 //Bittrex
-const bitrexProducts = ['BTC-ETH','BTC-NAV','BTC-XVG','BTC-BTN','BTC-DCR','BTC-CVC','BTC-XLM','BTC-ADA'];
+const bitrexProducts = ['BTC-ETH','BTC-NAV','BTC-XVG','BTC-BNT','BTC-DCR','BTC-CVC','BTC-XLM','BTC-ADA'];
 const bitrexMap = {
     'BTC-ETH':'ETHBTC',
     'BTC-NAV':'NAVBTC',
     'BTC-XVG':'XVGBTC',
-    'BTC-BTN':'BTNBTC',
+    'BTC-BNT':'BNTBTC',
     'BTC-DCR':'DCRBTC',
     'BTC-CVC':'CVCBTC',
     'BTC-XLM':'XLMBTC',
@@ -98,8 +98,8 @@ bittrex.options({
     'apisecret' : "API_SECRET",
 });
 
-readBitrex();
-setInterval(readBitrex,interval);
+//readBitrex();
+//setInterval(readBitrex,interval);
 
 function readBitrex(){
     bittrex.getmarketsummaries( function( data, err ) {
@@ -138,7 +138,7 @@ const krakenMap = {
     'XXBTZEUR':'BTCEUR'
 };
 
-setInterval(readKraken,interval);
+//setInterval(readKraken,interval);
 function readKraken(){
     kraken.api('Ticker',{pair:krakenProducts},function(error,result){
         if(error){
@@ -220,6 +220,41 @@ function indexDocument(source, product, msg){
     );
 }
 
+//every 12 hours
+readCurrencyConversion();
+setInterval(readCurrencyConversion,12*60*60*1000);
+function readCurrencyConversion(){{
+
+    //yyyy-MM-dd
+    var now = new Date();
+    var month = now.getMonth()+1;
+    if(month<=9)
+        month = "0" + month;
+    var day = now.getDate();
+    if(day<=9)
+        day = "0" + day;
+
+    var formatDate = now.getFullYear() + "-" + month + "-" + day;
+    var propertiesObject = { access_key:'fd9e4abeb03b2c7a81dd3cf2b54607ce', format:'0', currencies:'EUR,USD', date: formatDate};
+
+    var options = {
+        method: 'get',
+        json: true,
+        url: "http://apilayer.net/api/historical",
+        qs:propertiesObject
+    }
+
+    request.get(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                ;
+                googleSheetClient.update(googleFileId, "Objectives!G22", body.quotes.USDEUR, function(err, resp){
+                });
+            }else{
+                //console.log(error);
+            }
+        }
+    );
+}}
 
 const gdaxCellConf = {
     'BTCEUR':'Objectives!g21',
@@ -229,7 +264,7 @@ const bitfinexCellConf = {'IOTBTC':'Objectives!k43'};
 const bitrexCellConf = {
     'NAVBTC':'Objectives!k48',
     'XVGBTC':'Objectives!k49',
-    'BTNBTC':'Objectives!k50',
+    'BNTBTC':'Objectives!k50',
     'DCRBTC':'Objectives!k51',
     'CVCBTC':'Objectives!k52',
     'XLMBTC':'Objectives!k53',
