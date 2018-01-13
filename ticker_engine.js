@@ -36,7 +36,7 @@ const gdaxMap={
 };
 
 var latestGDaxRead=[];
-/*GTT.Factories.GDAX.FeedFactory(logger, gdaxProducts).then((feed) => {
+GTT.Factories.GDAX.FeedFactory(logger, gdaxProducts).then((feed) => {
     feed.on('data', msg => {
         if(msg.type == "ticker"){
             var row = gdaxMap[msg.productId];
@@ -52,7 +52,7 @@ var latestGDaxRead=[];
 }).catch((err) => {
     logger.log('error', err.message);
     process.exit(1);
-});*/
+});
 
 //BITFINEX
 const bitfinexProducts = ['ETH-BTC','IOTBTC'];
@@ -61,7 +61,7 @@ const bitfinexMap={
     'IOTBTC':'IOTBTC'
 };
 var latestBitfinexRead=[];
-/*GTT.Factories.Bitfinex.FeedFactory(logger, bitfinexProducts).then((feed) => {
+GTT.Factories.Bitfinex.FeedFactory(logger, bitfinexProducts).then((feed) => {
     feed.on('data', msg => {
         if(msg.type == "ticker"){
             var row = bitfinexMap[msg.productId]
@@ -77,7 +77,7 @@ var latestBitfinexRead=[];
 }).catch((err) => {
     logger.log('error', err.message);
     process.exit(1);
-});*/
+});
 
 //Bittrex
 const bitrexProducts = ['BTC-ETH','BTC-NAV','BTC-XVG','BTC-BNT','BTC-DCR','BTC-CVC','BTC-XLM','BTC-ADA'];
@@ -98,8 +98,8 @@ bittrex.options({
     'apisecret' : "API_SECRET",
 });
 
-//readBitrex();
-//setInterval(readBitrex,interval);
+readBitrex();
+setInterval(readBitrex,interval);
 
 function readBitrex(){
     bittrex.getmarketsummaries( function( data, err ) {
@@ -168,6 +168,8 @@ function indexDocument(source, product, msg){
         googleSheetClient.update(googleFileId, cell[0], cell[1], function(err, resp){
             //console.log(err);
             //console.log(resp);
+            var now = new Date();
+            googleSheetClient.update(googleFileId, "Objectives!G24", now.toLocaleDateString() + " " + now.toLocaleTimeString(), function(err, resp){});
         });
     }
 
