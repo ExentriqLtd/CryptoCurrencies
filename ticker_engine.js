@@ -264,6 +264,7 @@ const gdaxCellConf = {
 };
 const bitfinexCellConf = {'IOTBTC':'Objectives!k43'};
 const bitrexCellConf = {
+    'ETHBTC':'Objectives!k46',
     'NAVBTC':'Objectives!k48',
     'XVGBTC':'Objectives!k49',
     'BNTBTC':'Objectives!k50',
