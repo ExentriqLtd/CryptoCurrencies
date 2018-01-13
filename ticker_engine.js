@@ -262,7 +262,10 @@ const gdaxCellConf = {
     'BTCEUR':'Objectives!g21',
     'ETHBTC':'Objectives!k37'
 };
-const bitfinexCellConf = {'IOTBTC':'Objectives!k43'};
+const bitfinexCellConf = {
+    'IOTBTC':'Objectives!k43',
+    'ETHBTC':'Objectives!k42'
+};
 const bitrexCellConf = {
     'ETHBTC':'Objectives!k46',
     'NAVBTC':'Objectives!k48',
