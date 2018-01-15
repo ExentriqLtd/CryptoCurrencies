@@ -45,7 +45,7 @@ function readTicker(){
                     '<span class="market">' + opportunities[i].market + '</span>' +
                     '<span class="buy"> buy ' + ' from ' + opportunities[i].buyFrom + ' at ' + opportunities[i].buy + '</span>' +
                     '<span class="sell"> sell to ' + opportunities[i].sellTo + ' at ' + opportunities[i].sell + '</span>' +
-                    '<span class="percentage"> +'+ opportunities[i].percentage + '</span>' +
+                    '<span class="percentage"> +' + formatPercentage(opportunities[i].percentage) + '</span>' +
                 '</div>');
         }
     });
@@ -73,6 +73,10 @@ function getTopOpportunities(market,values){
     }
     result.percentage = ((result.sell-result.buy)/result.buy)*100;
     return result;
+}
+
+function formatPercentage(percentage){
+    return percentage.toFixed(2) + "%";
 }
 
 function readValue(market,ticker){
