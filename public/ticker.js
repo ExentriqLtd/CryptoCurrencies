@@ -31,7 +31,10 @@ function readTicker(){
                 "<td>" + readValue("Bitrex",result[i]["Bitrex"]) + "</td>" +
                 "<td>" + readValue("Bitfinex", result[i]["Bitfinex"]) + "</td>" +
                 "</tr>");
-            opportunities.push(getTopOpportunities(i,result[i]))
+
+            var opp = getTopOpportunities(i,result[i]);
+            if(opp.percentage>0)
+                opportunities.push(opp);
         }
 
         opportunities = opportunities.sort(function(a, b){return b.percentage-a.percentage});
@@ -77,15 +80,19 @@ function readValue(market,ticker){
         return "--";
 
     if(market == "GDAX"){
+        if(ticker.price == null) return "N/A"
         return ticker.price;
     }
     if(market == "Bitfinex"){
+        if(ticker.price == null) return "N/A"
         return ticker.price;
     }
     if(market == "Bitrex"){
+        if(ticker.Last == null) return "N/A"
         return ticker.Last;
     }
     if(market == "Kraken"){
+        if(ticker["c"][0] == null) return "N/A"
         return ticker["c"][0];
     }
 }
